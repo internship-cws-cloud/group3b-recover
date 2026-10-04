@@ -12,6 +12,7 @@ Cloud Engineering Internship, Cohort 3.
 
 | Name | GitHub | Owns |
 |Yasir Abdul-Rahaman|---|---|
+|Gideon Awuku|---|---|
 | | | |
 
 Fill this in during week 1. Every person should have a row, and by week 5
