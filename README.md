@@ -11,6 +11,7 @@ Cloud Engineering Internship, Cohort 3.
 ## Members
 
 | Name | GitHub | Owns |
+|Yasir Abdul-Rahaman|---|---|
 |Gideon Awuku|---|---|
 | | | |
 
