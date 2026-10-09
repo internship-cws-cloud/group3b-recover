@@ -1,0 +1,199 @@
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Reading...[0m[0m
+[0m[1mdata.aws_ecr_repository.app: Reading...[0m[0m
+[0m[1mdata.aws_vpc.default: Reading...[0m[0m
+[0m[1maws_ecs_cluster.main: Refreshing state... [id=arn:aws:ecs:eu-west-1:221032951827:cluster/group3b-cluster][0m
+[0m[1maws_cloudwatch_log_group.app: Refreshing state... [id=/ecs/group3b][0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Read complete after 0s [id=1077804475][0m
+[0m[1maws_iam_role.exec: Refreshing state... [id=group3b-ecs-exec][0m
+[0m[1mdata.aws_ecr_repository.app: Read complete after 1s [id=task-tracker][0m
+[0m[1mdata.aws_vpc.default: Read complete after 2s [id=vpc-07c9664e65d9dfb53][0m
+[0m[1mdata.aws_subnets.default: Reading...[0m[0m
+[0m[1maws_security_group.alb: Refreshing state... [id=sg-07fc08288f94619ee][0m
+[0m[1maws_security_group.db: Refreshing state... [id=sg-08fa0c5d1c559fb85][0m
+[0m[1maws_security_group.app: Refreshing state... [id=sg-055ef8155a10fea10][0m
+[0m[1maws_lb_target_group.web: Refreshing state... [id=arn:aws:elasticloadbalancing:eu-west-1:221032951827:targetgroup/group3b-tg/18de9329110a4ac1][0m
+[0m[1maws_vpc_security_group_egress_rule.app_out: Refreshing state... [id=sgr-00bd8f3132368854a][0m
+[0m[1mdata.aws_subnets.default: Read complete after 1s [id=eu-west-1][0m
+[0m[1maws_db_subnet_group.db: Refreshing state... [id=group3b-db][0m
+[0m[1maws_vpc_security_group_ingress_rule.db_from_app: Refreshing state... [id=sgr-0b3ddcb636460ecba][0m
+[0m[1maws_vpc_security_group_ingress_rule.app_from_alb: Refreshing state... [id=sgr-0d511d61f883aa21e][0m
+[0m[1maws_vpc_security_group_egress_rule.alb_out: Refreshing state... [id=sgr-078342a9e66228c53][0m
+[0m[1maws_vpc_security_group_ingress_rule.alb_http: Refreshing state... [id=sgr-0511891e5ff82ab5d][0m
+[0m[1maws_lb.web: Refreshing state... [id=arn:aws:elasticloadbalancing:eu-west-1:221032951827:loadbalancer/app/group3b-alb/9c76380551fb3b3a][0m
+[0m[1maws_lb_listener.http: Refreshing state... [id=arn:aws:elasticloadbalancing:eu-west-1:221032951827:listener/app/group3b-alb/9c76380551fb3b3a/053bf869a80e90cd][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+[31m-[0m/[32m+[0m destroy and then create replacement[0m
+
+Terraform will perform the following actions:
+
+[1m  # aws_cloudwatch_log_group.app[0m is tainted, so must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_cloudwatch_log_group" "app" {
+      [33m~[0m[0m arn               = "arn:aws:logs:eu-west-1:221032951827:log-group:/ecs/group3b" -> (known after apply)
+      [33m~[0m[0m id                = "/ecs/group3b" -> (known after apply)
+      [33m~[0m[0m log_group_class   = "STANDARD" -> (known after apply)
+        name              = "/ecs/group3b"
+      [32m+[0m[0m name_prefix       = (known after apply)
+      [31m-[0m[0m tags              = {} [90m-> null[0m[0m
+        [90m# (4 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_db_instance.tasks[0m will be created
+[0m  [32m+[0m[0m resource "aws_db_instance" "tasks" {
+      [32m+[0m[0m address                               = (known after apply)
+      [32m+[0m[0m allocated_storage                     = 20
+      [32m+[0m[0m apply_immediately                     = false
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m auto_minor_version_upgrade            = true
+      [32m+[0m[0m availability_zone                     = (known after apply)
+      [32m+[0m[0m backup_retention_period               = 0
+      [32m+[0m[0m backup_target                         = (known after apply)
+      [32m+[0m[0m backup_window                         = (known after apply)
+      [32m+[0m[0m ca_cert_identifier                    = (known after apply)
+      [32m+[0m[0m character_set_name                    = (known after apply)
+      [32m+[0m[0m copy_tags_to_snapshot                 = false
+      [32m+[0m[0m database_insights_mode                = (known after apply)
+      [32m+[0m[0m db_name                               = "tasks"
+      [32m+[0m[0m db_subnet_group_name                  = "group3b-db"
+      [32m+[0m[0m dedicated_log_volume                  = false
+      [32m+[0m[0m delete_automated_backups              = true
+      [32m+[0m[0m domain_fqdn                           = (known after apply)
+      [32m+[0m[0m endpoint                              = (known after apply)
+      [32m+[0m[0m engine                                = "postgres"
+      [32m+[0m[0m engine_lifecycle_support              = (known after apply)
+      [32m+[0m[0m engine_version                        = "16"
+      [32m+[0m[0m engine_version_actual                 = (known after apply)
+      [32m+[0m[0m hosted_zone_id                        = (known after apply)
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m identifier                            = "group3b-tasks"
+      [32m+[0m[0m identifier_prefix                     = (known after apply)
+      [32m+[0m[0m instance_class                        = "db.t4g.micro"
+      [32m+[0m[0m iops                                  = (known after apply)
+      [32m+[0m[0m kms_key_id                            = (known after apply)
+      [32m+[0m[0m latest_restorable_time                = (known after apply)
+      [32m+[0m[0m license_model                         = (known after apply)
+      [32m+[0m[0m listener_endpoint                     = (known after apply)
+      [32m+[0m[0m maintenance_window                    = (known after apply)
+      [32m+[0m[0m master_user_secret                    = (known after apply)
+      [32m+[0m[0m master_user_secret_kms_key_id         = (known after apply)
+      [32m+[0m[0m monitoring_interval                   = 0
+      [32m+[0m[0m monitoring_role_arn                   = (known after apply)
+      [32m+[0m[0m multi_az                              = false
+      [32m+[0m[0m nchar_character_set_name              = (known after apply)
+      [32m+[0m[0m network_type                          = (known after apply)
+      [32m+[0m[0m option_group_name                     = (known after apply)
+      [32m+[0m[0m parameter_group_name                  = (known after apply)
+      [32m+[0m[0m password                              = (sensitive value)
+      [32m+[0m[0m password_wo                           = (write-only attribute)
+      [32m+[0m[0m performance_insights_enabled          = false
+      [32m+[0m[0m performance_insights_kms_key_id       = (known after apply)
+      [32m+[0m[0m performance_insights_retention_period = (known after apply)
+      [32m+[0m[0m port                                  = (known after apply)
+      [32m+[0m[0m publicly_accessible                   = false
+      [32m+[0m[0m replica_mode                          = (known after apply)
+      [32m+[0m[0m replicas                              = (known after apply)
+      [32m+[0m[0m resource_id                           = (known after apply)
+      [32m+[0m[0m skip_final_snapshot                   = true
+      [32m+[0m[0m snapshot_identifier                   = (known after apply)
+      [32m+[0m[0m status                                = (known after apply)
+      [32m+[0m[0m storage_throughput                    = (known after apply)
+      [32m+[0m[0m storage_type                          = (known after apply)
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "Group"     = "group3b"
+          [32m+[0m[0m "ManagedBy" = "terraform"
+          [32m+[0m[0m "Programme" = "cloud-internship"
+        }
+      [32m+[0m[0m timezone                              = (known after apply)
+      [32m+[0m[0m username                              = "tasks"
+      [32m+[0m[0m vpc_security_group_ids                = [
+          [32m+[0m[0m "sg-08fa0c5d1c559fb85",
+        ]
+    }
+
+[1m  # aws_ecs_service.web[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_service" "web" {
+      [32m+[0m[0m availability_zone_rebalancing      = "DISABLED"
+      [32m+[0m[0m cluster                            = "arn:aws:ecs:eu-west-1:221032951827:cluster/group3b-cluster"
+      [32m+[0m[0m deployment_maximum_percent         = 200
+      [32m+[0m[0m deployment_minimum_healthy_percent = 100
+      [32m+[0m[0m desired_count                      = 1
+      [32m+[0m[0m enable_ecs_managed_tags            = false
+      [32m+[0m[0m enable_execute_command             = false
+      [32m+[0m[0m iam_role                           = (known after apply)
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m launch_type                        = "FARGATE"
+      [32m+[0m[0m name                               = "group3b-svc"
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [32m+[0m[0m scheduling_strategy                = "REPLICA"
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "Group"     = "group3b"
+          [32m+[0m[0m "ManagedBy" = "terraform"
+          [32m+[0m[0m "Programme" = "cloud-internship"
+        }
+      [32m+[0m[0m task_definition                    = (known after apply)
+      [32m+[0m[0m triggers                           = (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+
+      [32m+[0m[0m load_balancer {
+          [32m+[0m[0m container_name   = "web"
+          [32m+[0m[0m container_port   = 8080
+          [32m+[0m[0m target_group_arn = "arn:aws:elasticloadbalancing:eu-west-1:221032951827:targetgroup/group3b-tg/18de9329110a4ac1"
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network_configuration {
+          [32m+[0m[0m assign_public_ip = true
+          [32m+[0m[0m security_groups  = [
+              [32m+[0m[0m "sg-055ef8155a10fea10",
+            ]
+          [32m+[0m[0m subnets          = [
+              [32m+[0m[0m "subnet-0c1ef81f0902b7437",
+              [32m+[0m[0m "subnet-0f1b5ae60f1d7b1d0",
+              [32m+[0m[0m "subnet-0fa187284d2198020",
+            ]
+        }
+    }
+
+[1m  # aws_ecs_task_definition.web[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "web" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (sensitive value)
+      [32m+[0m[0m cpu                      = "256"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = "arn:aws:iam::221032951827:role/group3b-ecs-exec"
+      [32m+[0m[0m family                   = "group3b-task-tracker"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "512"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "Group"     = "group3b"
+          [32m+[0m[0m "ManagedBy" = "terraform"
+          [32m+[0m[0m "Programme" = "cloud-internship"
+        }
+      [32m+[0m[0m track_latest             = false
+    }
+
+[1m  # aws_iam_role_policy_attachment.exec[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy_attachment" "exec" {
+      [32m+[0m[0m id         = (known after apply)
+      [32m+[0m[0m policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+      [32m+[0m[0m role       = "group3b-ecs-exec"
+    }
+
+[1mPlan:[0m [0m5 to add, 0 to change, 1 to destroy.
+
+Changes to Outputs:
+  [32m+[0m[0m db_endpoint = (known after apply)
+[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
