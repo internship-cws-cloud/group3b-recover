@@ -7,18 +7,20 @@ terraform {
       version = "~> 5.60"
     }
   }
-}
 
-provider "aws" {
-  region = var.region
-
-  # Every resource gets these tags without you writing them each time.
-  # The Group tag is what makes per-group cost reporting possible.
-  default_tags {
-    tags = {
-      Group     = var.group_name
-      Programme = "cloud-internship"
-      ManagedBy = "terraform"
-    }
+  backend "s3" {
+    bucket       = "group3b-tfstate-221032951827"
+    key          = "infra/terraform.tfstate"
+    region       = "eu-west-1"
+    encrypt      = true
+    use_lockfile = true
   }
 }
+#default_tags {
+#tags = {
+#Group     = var.group_name
+#Programme = "cloud-internship"
+#ManagedBy = "terraform"
+#}
+#}
+#}
