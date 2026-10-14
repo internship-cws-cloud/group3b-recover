@@ -52,6 +52,6 @@ jobs:
             -var-file=ci.tfvars \
             -var="image_tag=${{ github.sha }}"
  
-            - name: Show the URL
-          working-directory: infra
-          run: terraform output -raw app_url >> $GITHUB_STEP_SUMMARY
+      - name: Show the URL
+        working-directory: infra
+        run: terraform output -raw app_url >> $GITHUB_STEP_SUMMARY
