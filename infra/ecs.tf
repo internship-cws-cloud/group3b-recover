@@ -1,3 +1,4 @@
+
 data "aws_iam_policy_document" "ecs_assume" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -9,6 +10,7 @@ data "aws_iam_policy_document" "ecs_assume" {
   }
 }
 
+# ECS task execution role: pulls images and sends logs to CloudWatch.
 resource "aws_iam_role" "exec" {
   name               = "${var.group_name}-ecs-exec"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume.json
@@ -19,15 +21,43 @@ resource "aws_iam_role_policy_attachment" "exec" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# ECS task role: grants the running container permissions needed by ECS Exec.
+resource "aws_iam_role" "task" {
+  name               = "${var.group_name}-ecs-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume.json
+}
+
+resource "aws_iam_role_policy" "ecs_exec" {
+  name = "ECSExecSSMMessages"
+  role = aws_iam_role.task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+      ]
+      Resource = "*"
+    }]
+  })
+}
+
+# Application logs.
 resource "aws_cloudwatch_log_group" "app" {
   name              = "/ecs/${var.group_name}"
   retention_in_days = 7
 }
 
+# Existing ECR repository.
 data "aws_ecr_repository" "app" {
   name = "task-tracker"
 }
 
+# ECS task definition.
 resource "aws_ecs_task_definition" "web" {
   family                   = "${var.group_name}-task-tracker"
   requires_compatibilities = ["FARGATE"]
@@ -37,6 +67,7 @@ resource "aws_ecs_task_definition" "web" {
   memory = 512
 
   execution_role_arn = aws_iam_role.exec.arn
+  task_role_arn      = aws_iam_role.task.arn
 
   container_definitions = jsonencode([{
     name  = "web"
@@ -72,17 +103,19 @@ resource "aws_ecs_task_definition" "web" {
   }])
 }
 
+# ECS cluster.
 resource "aws_ecs_cluster" "main" {
   name = "${var.group_name}-cluster"
 }
 
+# ECS service.
 resource "aws_ecs_service" "web" {
-  name            = "${var.group_name}-svc"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.web.arn
-
-  desired_count = 1
-  launch_type   = "FARGATE"
+  name                   = "${var.group_name}-svc"
+  cluster                = aws_ecs_cluster.main.id
+  task_definition        = aws_ecs_task_definition.web.arn
+  desired_count          = 1
+  launch_type            = "FARGATE"
+  enable_execute_command = true
 
   network_configuration {
     subnets         = data.aws_subnets.default.ids
@@ -97,6 +130,6 @@ resource "aws_ecs_service" "web" {
     container_port   = var.container_port
   }
 
-  # the listener must exist before the service registers targets
+  # Create the listener before registering service targets.
   depends_on = [aws_lb_listener.http]
 }
