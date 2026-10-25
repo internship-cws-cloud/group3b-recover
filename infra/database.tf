@@ -10,7 +10,7 @@ resource "aws_db_instance" "tasks" {
   engine         = "postgres"
   engine_version = "16"
 
-  # the smallest and cheapest that exists. Do not change this.
+  # The smallest and cheapest instance for this project.
   instance_class    = "db.t4g.micro"
   allocated_storage = 20
 
@@ -21,12 +21,21 @@ resource "aws_db_instance" "tasks" {
   db_subnet_group_name   = aws_db_subnet_group.db.name
   vpc_security_group_ids = [aws_security_group.db.id]
 
-  # not reachable from the internet, only from inside the VPC
+  # Private database; not directly reachable from the internet.
   publicly_accessible = false
+  multi_az            = false
 
-  multi_az = false
+  # Week 5–6 recovery configuration.
+  backup_retention_period = 7
+  apply_immediately = true
+  backup_window           = "02:00-03:00"
+  copy_tags_to_snapshot   = true
 
-  # week 3 only. The Recover it groups will change both of these.
-  backup_retention_period = 0
-  skip_final_snapshot     = true
+  deletion_protection       = true
+  skip_final_snapshot       = false
+  final_snapshot_identifier = "${var.group_name}-final-${formatdate("YYYYMMDDhhmm", timestamp())}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
