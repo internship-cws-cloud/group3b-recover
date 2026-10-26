@@ -24,3 +24,7 @@ venv/
 .DS_Store
 .idea/
 .vscode/
+
+# Local AWS ECS configuration files
+ecs-exec-policy.json
+task-definition-current.json
