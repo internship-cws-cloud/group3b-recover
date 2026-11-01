@@ -5,6 +5,132 @@ Recover the `group3b-tasks` database to a point immediately before accidental da
 
 > **Safety:** Run only in the authorised internship AWS account and Region. Confirm the Region explicitly. The restore creates a new instance; it does not repair the existing instance in place. Do not delete the source instance.
 
+## Logical Backup and Single-Table Recovery
+
+### Purpose
+
+Provide a faster recovery path for the `tasks` table using a prepared PostgreSQL data dump. This procedure is separate from RDS Point-in-Time Recovery (PITR).
+
+The application uses SQLAlchemy and the verified `tasks` table contains:
+
+| Column | Type |
+|---|---|
+| `id` | Integer, primary key |
+| `title` | String(200), NOT NULL |
+| `done` | Boolean, NOT NULL |
+| `created_at` | DateTime |
+
+### 1. Prepare the logical backup
+
+Prerequisites:
+- Confirm the correct database and AWS account.
+- Obtain approval to access the database.
+- Ensure PostgreSQL client utilities (`pg_dump` and `psql`) are installed.
+- Obtain the database connection securely through the approved credential mechanism.
+- Confirm the schema is `public` before using the example commands.
+
+Use the `DATABASE_URL` environment variable without printing its value:
+
+```bash
+test -n "$DATABASE_URL" || {
+  echo "DATABASE_URL is not set"
+  exit 1
+}
+
+pg_dump \
+  --data-only \
+  --column-inserts \
+  --table=public.tasks \
+  "$DATABASE_URL" \
+  > tasks-data.sql
+```
+
+Check that the dump file exists and is non-empty:
+
+```bash
+test -s tasks-data.sql && echo "Logical dump created"
+```
+
+Store the approved backup in durable storage with versioning, such as the project's approved S3 backup bucket. A laptop-only copy is not sufficient for the final project requirement.
+
+### 2. Validate the backup
+
+Record:
+- Backup creation time in UTC.
+- Database and table name.
+- Dump file size.
+- Row count before backup.
+- Backup file location.
+- Backup owner.
+
+Protect the dump because it contains application data. Do not commit it to Git or upload it to an unapproved location.
+
+### 3. Restore the table
+
+**WARNING: The following restore procedure can overwrite existing application data. Do not execute it against the live database without explicit approval and a verified backup.**
+
+First, confirm the target database and inspect the current row count.
+
+The controlled drill must use an approved test environment or an explicitly approved recovery window.
+
+After authorization, the table's existing rows can be cleared using:
+
+```sql
+DELETE FROM public.tasks;
+```
+
+Restore the prepared dump:
+
+```bash
+psql "$DATABASE_URL" \
+  -v ON_ERROR_STOP=1 \
+  -f tasks-data.sql
+```
+
+The dump uses column inserts so that original task IDs are preserved.
+
+### 4. Validate the recovered data
+
+Run:
+
+```sql
+SELECT COUNT(*) AS task_count,
+       MAX(created_at) AS newest_task
+FROM public.tasks;
+
+SELECT id, title, done, created_at
+FROM public.tasks
+ORDER BY id
+LIMIT 10;
+```
+
+Compare the recovered row count and representative records with the recorded pre-backup evidence.
+
+Also verify the PostgreSQL ID sequence after restoring explicit task IDs.
+
+Do not assume the sequence name. Inspect the actual PostgreSQL column definition and identify the sequence associated with `public.tasks.id`.
+
+Use the following read-only query when an approved database connection is available:
+
+```sql
+SELECT pg_get_serial_sequence('public.tasks', 'id');
+```
+
+### 5. Record the logical recovery measurement
+
+Record:
+- Restore start time in UTC.
+- Restore completion time in UTC.
+- Rows before recovery.
+- Rows after recovery.
+- Whether original IDs were preserved.
+- Application verification result.
+- Measured logical recovery duration.
+
+Do not report a recovery time until the drill has actually been performed.
+
+**Safety:** Do not run the deletion or restore commands until the recovery target, backup, credentials, and approval have been verified.
+
 ## 0. Record incident details and protect the current state
 Record UTC start time, incident owner, AWS account ID, Region, source DB identifier, approximate damage time, application impact, and approval/change ticket.
 
@@ -26,15 +152,17 @@ aws rds create-db-snapshot \
 
 Wait for the snapshot to complete and record its identifier. If the source is unavailable or snapshot creation is not appropriate, record that fact and follow the incident lead's approved alternative.
 
+
 ## 1. Check the point-in-time recovery window
 
 ```bash
-aws rds describe-db-instances \
+aws rds describe-db-instance-automated-backups \
   --db-instance-identifier group3b-tasks \
-  --query 'DBInstances[0].{Earliest: earliestRestorableTime,Latest:LatestRestorableTime}'
+  --query 'DBInstanceAutomatedBackups[0].{Status:Status,Retention:BackupRetentionPeriod,Earliest:RestoreWindow.EarliestTime,Latest:RestoreWindow.LatestTime}' \
+  --output table'
 ```
 
-If the query does not return the expected fields, inspect the full `DBInstances[0]` response and confirm the correct Region. Select a restore timestamp **after the earliest restorable time and before the latest restorable time**, and just before the known damage. Confirm the timezone is UTC. Do not use a future timestamp. Record why this point was selected.
+If the query does not return the expected fields, inspect the full DBInstanceAutomatedBackups[0] response and confirm the correct AWS Region. Select a restore timestamp **after the earliest restorable time and before the latest restorable time**, and just before the known damage. Confirm the timezone is UTC. Do not use a future timestamp. Record why this point was selected.
 
 ## 2. Capture source configuration
 

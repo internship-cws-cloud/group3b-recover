@@ -67,3 +67,14 @@ Discuss, without damaging a shared environment:
 - The API smoke test fails after cutover.
 
 For each, identify the stop condition, who must be notified, evidence to collect, and rollback/escalation path.
+
+## Drill 10 — Logical backup and restore
+**Task:** In an authorised non-production environment, create a logical backup of the application `tasks` table and restore it to the approved test database or test table. Use the documented `pg_dump` and `psql` procedures. Store the backup in the approved durable, versioned S3 location; do not rely on a laptop-only copy.
+
+**Evidence:** Backup start and finish times in UTC, backup file location and size, restore start and finish times, row count before backup and after restore, latest `created_at` value, and representative records. Redact credentials and sensitive data.
+
+**Pass:** The backup file is non-empty and stored in the approved location. The restore completes without errors, and the restored data passes the agreed validation checks. Record the measured logical restore duration and any discrepancies.
+
+**Safety:** Never run this drill against the live shared application database or delete shared application data. Use only an explicitly authorised non-production database and dataset.
+
+**Repeat:** Complete the drill at least twice, following the runbook each time. Record any errors and corrections between attempts.

@@ -56,7 +56,7 @@
 - **Cutover approved by:** `<name/role>`
 - **Configuration changed:** `<where/how; no secrets>`
 - **Rollback path:** `<restore prior endpoint/configuration and verify>`
-- **Source DB/snapshot retention decision:** `<decision and approver>`
+- **Source DB/snapshot retention decision: ** `<decision and approver>`
 
 ## 8. Lessons and follow-up actions
 1. `<action, owner, due date>`

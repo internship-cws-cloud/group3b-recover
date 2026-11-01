@@ -27,9 +27,12 @@ resource "aws_db_instance" "tasks" {
 
   # Week 5–6 recovery configuration.
   backup_retention_period = 7
-  apply_immediately       = true
-  backup_window           = "02:00-03:00"
-  copy_tags_to_snapshot   = true
+
+  backup_window            = "02:00-03:00"
+  copy_tags_to_snapshot    = true
+  delete_automated_backups = false
+
+  apply_immediately = true
 
   deletion_protection       = true
   skip_final_snapshot       = false
