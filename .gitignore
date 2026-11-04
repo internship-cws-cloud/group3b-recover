@@ -28,3 +28,9 @@ venv/
 # Local AWS ECS configuration files
 ecs-exec-policy.json
 task-definition-current.json
+
+# Terraform plan files may contain sensitive values
+*.tfplan
+*.tfplan.*
+plan.txt
+tfplan
