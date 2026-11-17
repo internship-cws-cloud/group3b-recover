@@ -14,6 +14,10 @@ Cloud Engineering Internship, Cohort 3.
 |---|---|---|
 |Yasir Abdul-Rahaman|olooyasir-cmd| - |
 |Gideon Awuku|gideonawuku100| - |
+|Yaw Kyeremeh| - | - |
+|⁠Felix Essun| - | - |
+|Albert Phinehas Owusu| - | - |
+|Dominic Boadu Agyenim| - | - |
 | - | - | - |
 
 Fill this in during week 1. Every person should have a row, and by week 5
